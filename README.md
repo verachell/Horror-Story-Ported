@@ -14,7 +14,7 @@ You need Ruby installed on your machine to use this.
 
 3. Then on your command line, type ```ruby yeetwords.rb horror_ported.txt``` to run the program. It will output a Markdown file containing the story.
 
-An example of the output in Markdown format is included in this repository.
+An example of output in Markdown format is included in this repository.
 
 ## Changes that were made in the port versus the original
 Changes to word and sentence data from the original to the ported were minimized as much as possible, and are documented here:
