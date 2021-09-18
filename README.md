@@ -1,7 +1,7 @@
 # Horror-Story-Ported
 My NaNoGenMo story from 2020 (originally in Ruby) ported to YeetWords
 
-This is an example of a YeetWords program. My NaNoGenMo project from 2020 [Horror Story With Monster](https://github.com/verachell/Horror-Story-with-Monster-NaNoGenMo-2020) (written in Ruby) is ported here to YeetWords as a practical demonstration of the use of YeetWords to create a story. 
+This is an example of a YeetWords program. My NaNoGenMo project from 2020 [Horror Story With Monster](https://github.com/verachell/Horror-Story-with-Monster-NaNoGenMo-2020) (written in Ruby) is ported here to YeetWords as a practical demonstration of the use of [YeetWords](https://github.com/verachell/YeetWords) to create a story. 
 
 This repository may also be used as a demo to make sure you have YeetWords installed and running properly.
 
