@@ -1,0 +1,6 @@
+forward
+onward
+south
+east
+west
+north
