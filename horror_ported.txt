@@ -1,0 +1,259 @@
+# set up words
+ASSIGNLIST adj = positive-adjectives
+ASSIGNLIST emotion = positive-emotions
+ASSIGNLIST adverb = positive-adverbs
+ASSIGNLIST verbed = transitive-past-tense
+ASSIGNLIST verbing = verbs-people
+ASSIGNLIST portablenoun = Portable-nouns 3
+ASSIGNLIST occupation = Occupations 1
+ASSIGNLIST nounphrase = mostly-noun-phrases
+ASSIGNLIST lgnoun = Large-nouns
+ASSIGNLIST themonster = monsterallnames 1
+SUPCASE monstercap = themonster
+WORDJOIN monstername = "The " + monstercap
+WORDJOIN treetype = Tree-types + " tree"
+ASSIGNLIST biometree = treetype 2
+WORDJOIN biometreeplural = biometree + "s"
+ASSIGNLIST biomeanimal = Animals 2
+WORDJOIN biomeanimalplural = biomeanimal + "s"
+ASSIGNLIST biomelandform = Landforms 2
+WORDJOIN biomelandformplural = biomelandform + "s"
+ASSIGNLIST biome = biometree + biomeanimal + biomelandform
+ASSIGNLIST biomeplural = biometreeplural + biomeanimalplural + biomelandformplural
+ASSIGNLIST cityprefix = City-prefixes 1
+ASSIGNLIST citysuffix = City-suffixes 1
+WORDJOIN cityname = cityprefix + citysuffix
+ASSIGNLIST titlemiddle = "in" + "of"
+WORDJOIN title = monstername + " " + titlemiddle + " " + cityname
+UPCASE malenames = MaleNames-2019-200
+UPCASE femalenames = FemaleNames-2019-200
+ASSIGNLIST allnames = malenames + femalenames
+ASSIGNLIST said = "said" + "remarked" + "mentioned" + "declared" + "stated"
+ASSIGNLIST monstermove = "slithered" + "shuffled" + "crept" + "staggered" + "shambled" + "lumbered"
+ASSIGNLIST monsteradv = "malevolently" + "maliciously" + "calculatingly" + "evilly" + "basely" + "horrifyingly"
+ASSIGNLIST monsterfeature = "horn" + "claw" + "snout" + "tooth" + "tail" + "slime"
+ASSIGNLIST bodypart = "nose" + "ear" + "leg" + "arm" + "spleen" + "foot" + "hand" + "finger" + "toe" + "neck" + "head" + "knee" + "ankle" + "brain" + "intestine"
+
+ASSIGNCATALOG allwords = wfolder + adj + emotion + adverb + verbed + verbing + portablenoun + nounphrase + lgnoun + themonster + monstername + occupations + occupation + biome + biomeplural + cityname + said + bodypart + monstermove + monsteradv + monsterfeature
+
+REFGENDER male.names = MaleNames-2019-200
+REFGENDER female.names = FemaleNames-2019-200
+
+# set up sentences
+ASSIGNCATALOG normal-sentences = sentences + other + positive-weather + positive-lgnouns
+ASSIGNCATALOG changing-dialogue = positive-dialogue
+ASSIGNCATALOG changing-txt = positive-txts
+ASSIGNLIST txt-intro = "_PERSON.NAME_'s phone buzzed" + "_PERSON.NAME_ heard a phone notification" + "_PERSON.NAME_ pulled out a phone which had just chimed" + "_PERSON.NAME_ received an incoming message"
+WORDJOIN txt-pre = txt-intro + ":"
+ASSIGNLIST convo-pre = "_PERSON.NAME_ _SAID_, "
+ASSIGNLIST convo-post = "_SAID_ _PERSON.NAME_"
+ASSIGNLIST txt-contact = "_PERSON.CONTACTS_"
+ASSIGNLIST monster-open = "*Meanwhile, in the depths of _CITYNAME_, _MONSTERNAME_ laughed"
+ASSIGNLIST monster-close = "Soon, all that was left of the _OCCUPATION_ was a piece of _BODYPART_*"
+
+# set up characters
+GEN person 2--6 binary
+faveverb 1 verbs-people
+job 1 occupations
+contacts 2 allnames
+GENEND
+
+LOOP 6
+ASSIGNLIST person.contacts = person.contacts + "MOM" + "DAD"
+SHIFT person
+LOOPEND
+
+# generate start of the story
+FORMAT DZ
+WRITE title allwords
+FORMAT ACPS
+NEWCHAPTER
+ASSIGNLIST start = "In the distance a _BIOME_ could be seen"
+RECITE names = person.name + all
+WRITE start allwords
+FORMAT A
+WRITE names allwords
+ASSIGNLIST intro = " were _WALKING_ among the _BIOMEPLURAL_ of _CITYNAME_. For the moment, they were putting aside the strange disappearances that had been occurring. Feeling _EMOTION_, they moved _DIRECTION_, carrying with them a "
+WRITE intro allwords
+RECITE itemscarried = portablenoun
+FORMAT APS
+WRITE itemscarried allwords
+FORMAT ACPS
+
+# define descs
+DESC regular-sentences1
+FORMAT ACPS
+WRITE normal-sentences allwords 0--4
+SHIFT person
+DESCEND
+
+DESC regular-sentences2
+FORMAT ACPS
+WRITE normal-sentences allwords 1--3
+SHIFT person
+DESCEND
+
+DESC convo1
+NEWPARA
+FORMAT N
+WRITE convo-pre allwords
+FORMAT PCQZ
+WRITE changing-dialogue allwords
+SHIFT person
+NEWPARA
+DESCEND
+
+DESC convo2
+NEWPARA
+FORMAT CMQS
+WRITE changing-dialogue allwords
+FORMAT PS
+WRITE convo-post allwords
+SHIFT person
+NEWPARA
+DESCEND
+
+# text message
+DESC txt
+FORMAT G
+WRITE txt-pre allwords
+FORMAT T
+WRITE txt-contact allwords
+NEWLINE
+FORMAT TZ
+WRITE changing-txt allwords
+FORMAT ACPS
+NEWLINE
+SHIFT person
+DESCEND
+
+# monster sentences
+DESC monster
+ASSIGNCATALOG allwords = allwords - occupation
+ASSIGNLIST occupation = occupations 1
+ASSIGNCATALOG allwords = allwords + occupation
+NEWPARA
+FORMAT ACPS
+WRITE monster-open allwords
+LOOP 50W
+WRITE monster-sentences allwords
+LOOPEND
+WRITE monster-close allwords
+NEWPARA
+DESCEND
+
+# define regular mix of sentences before monster interlude
+DESC basic-mix1
+LOOP 500W--800W
+CALL regular-sentences1
+LOOP 0--1
+CALL txt
+LOOPEND
+CALL regular-sentences2
+LOOP 0--1
+CALL convo1
+LOOPEND
+CALL regular-sentences2
+CALL convo2
+CALL regular-sentences1
+LOOP 0--1
+CALL txt
+LOOPEND
+LOOPEND
+DESCEND
+
+# define regular mix of sentences before monster interlude
+DESC basic-mix2
+LOOP 100W--300W
+CALL regular-sentences2
+CALL regular-sentences1
+CALL txt
+CALL regular-sentences1
+CALL convo1
+LOOPEND
+DESCEND
+
+# define a chapter
+DESC chapter
+CALL basic-mix1
+CALL monster
+CALL basic-mix2
+NEWCHAPTER
+DESCEND
+
+## main body of the story ##
+
+# First third of the story - positive vocabulary
+LOOP 17000W
+CALL chapter
+LOOPEND
+
+# change to neutral words
+
+ASSIGNCATALOG changing-dialogue = neutral-dialogue
+ASSIGNCATALOG changing-txt = neutral-txts
+ASSIGNCATALOG normal-sentences = normal-sentences - positive-weather - positive-lgnouns + neutral-weather + neutral-lgnouns
+ASSIGNCATALOG allwords = allwords - adj - emotion - adverb
+ASSIGNLIST adj = neutral-adjectives
+ASSIGNLIST emotion = neutral-emotions
+ASSIGNLIST adverb = neutral-adverbs
+ASSIGNCATALOG allwords = allwords + adj + emotion + adverb
+
+LOOP 6
+ASSIGNLIST remove-contact = person.contacts 1
+ASSIGNLIST person.contacts = person.contacts - remove-contact
+ASSIGNLIST person.contacts = person.contacts + "UNKNOWN"
+SHIFT person
+LOOPEND
+
+SHUFFLE person
+
+# Middle third of the story - neutral vocabulary
+LOOP 17000W
+call chapter
+LOOPEND
+
+# change to negative words
+
+ASSIGNCATALOG changing-dialogue = negative-dialogue
+ASSIGNCATALOG changing-txt = negative-txts
+ASSIGNCATALOG normal-sentences = normal-sentences - neutral-weather - neutral-lgnouns + negative-weather + negative-lgnouns
+ASSIGNCATALOG allwords = allwords - adj - emotion - adverb
+ASSIGNLIST adj = negative-adjectives
+ASSIGNLIST emotion = negative-emotions
+ASSIGNLIST adverb = negative-adverbs
+ASSIGNCATALOG allwords = allwords + adj + emotion + adverb
+
+LOOP 6
+ASSIGNLIST person.contacts = "UNKNOWN"
+SHIFT person
+LOOPEND
+
+SHUFFLE person
+
+# Last third of the story - negative vocabulary
+LOOP 17000W
+call chapter
+LOOPEND
+
+# Ending of story
+ASSIGNCATALOG allwords = allwords + names + itemscarried
+
+ASSIGNLIST ending1 = "The _LGNOUN_ started advancing _MONSTERADV_ toward them, controlled by _MONSTERNAME_. They were blocked behind them by a _ADJ_ wall of _BIOMEPLURAL_ which had materialized. Suddenly they heard a rustle and caught a glimpse of a _ADJ_ _MONSTERFEATURE_. A nearby _BIOME_ snarled _ADVERB_. _MONSTERNAME_ crept near them and lunged, but missed. _PERSON.NAME_ swiped at it with the _PORTABLENOUN_ but this did not seem to have any effect. _PERSON.NAME_ took out the _ITEMSCARRIED_. By repeatedly _VERBING_, they were able to combine the items together into a weapon. "
+ASSIGNLIST ending2 = "_PERSON.NAME_ threw it at _MONSTERNAME_, and it was unable to withstand its effects. Its _MONSTERFEATURE_ dulled and it became still. "
+ASSIGNLIST ending3 = "_NAMES_ walked triumphantly in the direction of home. After this, _PERSON.NAME_ was looking forward to going back work as a _PERSON.JOB_. They all were looking forward to things being back to normal."
+ASSIGNLIST ending4 = "*Behind them, a _MONSTERFEATURE_ twitched.*"
+ASSIGNLIST ending5 = "THE END"
+
+NEWPARA
+FORMAT A
+WRITE ending1 allwords
+SHIFT person
+WRITE ending2 allwords
+SHIFT person
+NEWPARA
+WRITE ending3 allwords
+NEWPARA
+WRITE ending4 allwords
+NEWPARA
+WRITE ending5 allwords
