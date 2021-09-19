@@ -8,7 +8,7 @@ This repository may also be used as a demo to make sure you have YeetWords insta
 ## Usage
 You need Ruby installed on your machine to use this. 
 
-1. Download this repository.  
+1. Download the contents of this repository.  
 
 2. In its working directory also download and include the file ```yeetwords.rb``` from the [YeetWords repository](https://github.com/verachell/YeetWords). 
 
